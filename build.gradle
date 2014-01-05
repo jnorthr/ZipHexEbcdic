@@ -1,0 +1,85 @@
+// ZipHexEbcdic/build.gradle
+apply plugin: 'groovy'
+apply plugin: 'application'
+
+sourceCompatibility = 1.5
+targetCompatibility = 1.5
+defaultTasks 'clean', 'build' // ,'jar','dist', 'apiIcons', 'reportIcons'
+
+
+// prepare for gradle 2.0 - wrap defs in project.ext closure
+project.ext {
+	// current EBCDIC version
+	version = '1.0'
+	group = 'groovyx.ebcdic'
+	title = "Ebcdic Decoder"
+}
+
+
+repositories {
+    mavenCentral()
+    //add repositories for optional dependencies
+    maven { url  "http://repository.jboss.org/maven2/" }
+}
+
+dependencies {
+    compile "org.codehaus.groovy:groovy-all:2.2.1"
+    testCompile "junit:junit:4.10"
+}
+
+jar {
+    baseName 'ebcdic'
+    manifest {
+        attributes 'Implementation-Title': 'Ebcdic', 'Implementation-Version': '0.1'
+    }
+    metaInf { from 'src/main/META-INF' }
+}
+
+groovydoc {
+    def title = "Ebcdic ${version}"
+    windowTitle title
+    docTitle title
+    link 'http://java.sun.com/javaee/5/docs/api/', 'javax.servlet.'
+    link 'http://java.sun.com/j2se/1.5.0/docs/api', 'java.,org.xml.,org.xml.'
+    link 'http://groovy.codehaus.org/gapi/', 'org.codehaus.groovy.,groovy.'
+}
+
+
+// custom tasks for creating source/javadoc jars
+task sourcesJar(type: Jar, dependsOn:classes) {
+     baseName 'ebcdic'
+     classifier 'sources'
+     from sourceSets.main.allSource
+}
+ 
+task javadocJar(type: Jar, dependsOn:groovydoc) {
+     baseName 'ebcdic'
+     classifier 'javadoc'
+     //from apiDir
+}
+ 
+// add javadoc/source jar tasks as artifacts
+artifacts {
+     archives sourcesJar
+     //archives javadocJar
+}
+
+
+task(runSimple, dependsOn: 'classes', type: JavaExec) {
+	main = 'ToHex'
+	classpath = sourceSets.main.runtimeClasspath
+	args 'jimbo', 'hi kids'
+	systemProperty 'simple.message', 'Hi kids '
+}
+
+// testing  parameters
+test {
+    maxParallelForks = Runtime.getRuntime().availableProcessors()
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion "1.10"
+}

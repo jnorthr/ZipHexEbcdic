@@ -14,11 +14,14 @@
  class Zip {
 
    final static java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat();
+   static String fileName = null;
 
    public static void main(String[] args) 
    {
-      
-      String fileName = args[0];
+      Zip z = new Zip();
+      try{
+      	fileName = z.browse();
+	  } catch(Exception x) {};
       System.out.println("contents of " + fileName + "...");
       if (fileName.endsWith(".gz")) 
       {
@@ -35,6 +38,38 @@
        System.out.println(getJarFile(fileName));
      }
    } // END OF MAIN
+
+
+    /**
+     * Choose a file to see in hex by browsing to the file of your choice or
+     * typing a file name.
+     */
+	protected String browse() throws Exception
+	{
+		String initialDirectory = System.getProperty("user.dir");
+		javax.swing.JFileChooser fileDialog = new javax.swing.JFileChooser(initialDirectory);
+		String fn = null;
+		if (fileDialog.showDialog(null,"Select") == javax.swing.JFileChooser.APPROVE_OPTION)
+		{
+			try
+			{
+				File f = fileDialog.getSelectedFile();
+				fn = f.getAbsolutePath();
+			}
+			catch(Exception e)
+			{
+                        throw new FileNotFoundException(fn+" cannot be found or used");
+			}
+		} // end of APPROVE_OPTION
+
+		return fn;
+		
+	} // END OF browse()
+
+
+
+
+
 
 
    public static StringBuffer process(String fileName) 

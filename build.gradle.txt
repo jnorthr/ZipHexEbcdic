@@ -1,0 +1,39 @@
+//import org.apache.ivy.plugins.resolver.URLResolver
+apply plugin: 'java'
+apply plugin: 'groovy'
+
+repositories {
+    mavenCentral()
+    // For newer/beta versions of Groovy
+    maven {
+        url 'http://repository.codehaus.org/'
+        url "http://repo.springsource.org/libs-milestone-s3-cache"
+    }
+}
+
+dependencies {
+    groovy group: 'org.codehaus.groovy', name: 'groovy', version: '2.1.7'
+    groovy group: 'org.apache.ivy', name:'ivy', version:'2.2.0' 
+}
+
+
+task(runToHex, dependsOn: [compileGroovy], type: JavaExec) {
+    main = 'ToHex'
+    classpath = sourceSets.main.runtimeClasspath + files('config/')
+}
+
+task(runZip, dependsOn: [compileGroovy], type: JavaExec) {
+    main = 'Zip'
+    classpath = sourceSets.main.runtimeClasspath + files('config/')
+}
+
+task(runTrans, dependsOn: [compileGroovy], type: JavaExec) {
+    main = 'EbcdicTranslator'
+    classpath = sourceSets.main.runtimeClasspath + files('config/')
+}
+
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion "1.8-rc-1"
+}

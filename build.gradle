@@ -2,9 +2,10 @@
 apply plugin: 'groovy'
 apply plugin: 'application'
 
-sourceCompatibility = 1.5
-targetCompatibility = 1.5
-defaultTasks 'clean', 'build' // ,'jar','dist', 'apiIcons', 'reportIcons'
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+defaultTasks 'clean', 'build','jar', 'test', 'groovydoc', 'javadoc', 'distTar', 'distZip', 'run', 'runSimple' 
+mainClassName = 'ToHex'
 
 
 // prepare for gradle 2.0 - wrap defs in project.ext closure
@@ -23,14 +24,14 @@ repositories {
 }
 
 dependencies {
-    compile "org.codehaus.groovy:groovy-all:2.2.1"
-    testCompile "junit:junit:4.10"
+    compile "org.codehaus.groovy:groovy-all:2.4.7"
+    testCompile "junit:junit:4.11"
 }
 
 jar {
     baseName 'ebcdic'
     manifest {
-        attributes 'Implementation-Title': 'Ebcdic', 'Implementation-Version': '0.1'
+        attributes 'Implementation-Title': 'Ebcdic', 'Implementation-Version': '0.2'
     }
     metaInf { from 'src/main/META-INF' }
 }
@@ -39,9 +40,9 @@ groovydoc {
     def title = "Ebcdic ${version}"
     windowTitle title
     docTitle title
-    link 'http://java.sun.com/javaee/5/docs/api/', 'javax.servlet.'
-    link 'http://java.sun.com/j2se/1.5.0/docs/api', 'java.,org.xml.,org.xml.'
-    link 'http://groovy.codehaus.org/gapi/', 'org.codehaus.groovy.,groovy.'
+    link 'http://java.sun.com/javaee/6/docs/api/', 'javax.servlet.'
+    link 'http://java.sun.com/j2se/1.6.0/docs/api', 'java.,org.xml.,org.xml.'
+    link 'http://docs.groovy-lang.org/latest/html/gapi/', 'org.codehaus.groovy.,groovy.'
 }
 
 
@@ -61,7 +62,7 @@ task javadocJar(type: Jar, dependsOn:groovydoc) {
 // add javadoc/source jar tasks as artifacts
 artifacts {
      archives sourcesJar
-     //archives javadocJar
+     archives javadocJar
 }
 
 
@@ -81,5 +82,5 @@ test {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion "1.10"
+    gradleVersion "2.14"
 }
